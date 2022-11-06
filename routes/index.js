@@ -90,4 +90,39 @@ router.get('/getPhysicalStates', async function (req, res) {
   }
  });
 
+ router.get('/labNames', async function (req, res) {
+  try {
+    const data = await client.query(`select lab_name from lab;`);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error occurred while signing in!", //Database connection error
+   });
+  }
+ });
+
+ router.get('/registerUser', async function (req, res) {
+  const { first_name,last_name,email,mobile,username,password,user_type,lab_name } = req.query;
+  //console.log(username);
+  try {
+    const lab_id_query = await client.query(`SELECT lab_id FROM LAB WHERE lab_name=$1`,[lab_name]);
+    const lab_id = lab_id_query.rows[0].lab_id
+    const result = await client.query(`insert into users(first_name,last_name,email,mobile,username,password,user_type,lab_id)
+       values($1,$2,$3,$4,$5,$6,$7,$8);`, [first_name,last_name,email,mobile,username,password,user_type,lab_id]);
+    res.status(200).send({
+      message:"User Successfully Created."
+    })
+  } catch (err) {
+    //console.log(err);
+    res.status(500).json({
+      message: "Database error occurred while signing in!", //Database connection error
+    });
+  };
+});
+
+
+
+
 module.exports = router;
