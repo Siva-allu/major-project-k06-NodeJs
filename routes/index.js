@@ -90,6 +90,33 @@ router.get('/getPhysicalStates', async function (req, res) {
   }
  });
 
+ router.get('/labDetails', async function (req, res) {
+  try {
+    const data = await client.query(`select * from lab;`);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error occurred while signing in!", //Database connection error
+   });
+  }
+ });
+
+ router.get('/getDeptName', async function (req, res) {
+  try {
+    const {dept_id}=req.query;
+    const data = await client.query(`select dept_name from department where dept_id =$1;`,[dept_id]);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error occurred while signing in!", //Database connection error
+   });
+  }
+ });
+
  router.get('/labNames', async function (req, res) {
   try {
     const data = await client.query(`select lab_name from lab;`);
@@ -122,7 +149,20 @@ router.get('/getPhysicalStates', async function (req, res) {
   };
 });
 
-
+router.get('/addQuantity', async function (req, res) {
+  const { chemical_name, quantity,lab_name } = req.query;
+  console.log(chemical_name);
+  console.log(quantity);
+  console.log(lab_name);
+  // try {
+    
+  // } catch (err) {
+  //   console.log(err);
+  //   res.status(500).json({
+  //     message: "Database error occurred while signing in!", //Database connection error
+  //   });
+  // };
+});
 
 
 module.exports = router;
