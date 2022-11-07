@@ -103,16 +103,28 @@ router.get('/getPhysicalStates', async function (req, res) {
   }
  });
 
- router.get('/getDeptName', async function (req, res) {
+ router.get('/getAllUsers', async function (req, res) {
   try {
-    const {dept_id}=req.query;
-    const data = await client.query(`select dept_name from department where dept_id =$1;`,[dept_id]);
+    const data = await client.query(`select * from users;`);
     const chemicalData = data.rows;
     res.status(200).send(chemicalData);
   } catch (error) {
    console.log(error);
    res.status(500).json({
      message: "Database error occurred while signing in!", //Database connection error
+   });
+  }
+ });
+
+ router.get('/deptDetails', async function (req, res) {
+  try {
+    const data = await client.query(`select * from department;`);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
    });
   }
  });
@@ -148,6 +160,48 @@ router.get('/getPhysicalStates', async function (req, res) {
     });
   };
 });
+
+router.get('/removeDepartment', async function (req, res) {
+  const { dept_name } = req.query;
+  //console.log(username);
+  try {
+    
+    const result = await client.query(`DELETE FROM department where dept_name=$1`, [dept_name]);
+    res.status(200).send({
+      message:"Department Successfully Removed."
+    })
+  } catch (err) {
+    //console.log(err);
+    res.status(500).json({
+      message: "Database error occurred while signing in!", //Database connection error
+    });
+  };
+});
+
+router.get('/addDepartment', async function (req, res) {
+  const { dept_name } = req.query;
+  //console.log(username);
+  try {
+    const check = await client.query(`select dept_name from department where dept_name=$1`,[dept_name]);
+    const flag = check.rows;
+    if(flag.length !=0){
+      res.status(200).send({
+        message:"Department Already Exists."
+      })
+    }
+    else{
+    const result = await client.query(`insert into department(dept_name) values($1);`, [dept_name]);
+    res.status(200).send({
+      message:"Department Successfully Created."
+    })}
+  } catch (err) {
+    //console.log(err);
+    res.status(500).json({
+      message: "Database error occurred while signing in!", //Database connection error
+    });
+  };
+});
+
 
 router.get('/addQuantity', async function (req, res) {
   const { chemical_name, quantity,lab_name } = req.query;
