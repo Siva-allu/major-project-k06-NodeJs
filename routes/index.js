@@ -57,7 +57,7 @@ router.get('/getAllChemicals', async function (req, res) {
  } catch (error) {
   console.log(error);
   res.status(500).json({
-    message: "Database error occurred while signing in!", //Database connection error
+    message: "Database error", //Database connection error
   });
  }
 
@@ -70,7 +70,7 @@ router.get('/getAllChemicalNames', async function (req, res) {
   } catch (error) {
    console.log(error);
    res.status(500).json({
-     message: "Database error occurred while signing in!", //Database connection error
+     message: "Database error ", //Database connection error
    });
   }
  
@@ -85,7 +85,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   } catch (error) {
    console.log(error);
    res.status(500).json({
-     message: "Database error occurred while signing in!", //Database connection error
+     message: "Database error", //Database connection error
    });
   }
  });
@@ -98,7 +98,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   } catch (error) {
    console.log(error);
    res.status(500).json({
-     message: "Database error occurred while signing in!", //Database connection error
+     message: "Database error ", //Database connection error
    });
   }
  });
@@ -111,7 +111,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   } catch (error) {
    console.log(error);
    res.status(500).json({
-     message: "Database error occurred while signing in!", //Database connection error
+     message: "Database error ", //Database connection error
    });
   }
  });
@@ -137,7 +137,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   } catch (error) {
    console.log(error);
    res.status(500).json({
-     message: "Database error occurred while signing in!", //Database connection error
+     message: "Database error ", //Database connection error
    });
   }
  });
@@ -156,7 +156,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   } catch (err) {
     //console.log(err);
     res.status(500).json({
-      message: "Database error occurred while signing in!", //Database connection error
+      message: "Database error ", //Database connection error
     });
   };
 });
@@ -173,7 +173,7 @@ router.get('/removeDepartment', async function (req, res) {
   } catch (err) {
     //console.log(err);
     res.status(500).json({
-      message: "Database error occurred while signing in!", //Database connection error
+      message: "Database error ", //Database connection error
     });
   };
 });
@@ -197,7 +197,7 @@ router.get('/addDepartment', async function (req, res) {
   } catch (err) {
     //console.log(err);
     res.status(500).json({
-      message: "Database error occurred while signing in!", //Database connection error
+      message: "Database error ", //Database connection error
     });
   };
 });
