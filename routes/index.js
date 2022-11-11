@@ -202,21 +202,100 @@ router.get('/addDepartment', async function (req, res) {
   };
 });
 
+router.get('/getUnits',async function(req,res){
+  const {chemical_name}=req.query;
+  try {
+    const data = await client.query(`select units from units where physical_state=(select physical_state from chemical where chemical_name = $1);`,[chemical_name]);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
+   });
+  }
+
+});
+
 
 router.get('/addQuantity', async function (req, res) {
-  const { chemical_name, quantity,lab_name } = req.query;
-  console.log(chemical_name);
-  console.log(quantity);
-  console.log(lab_name);
-  // try {
+  var { chemical_name, quantity,lab_name } = req.query;
+  quantity=Number(quantity);
+  try {
+    const chemical_id_data= await client.query(`select chemical_id from chemical where chemical_name=$1;`,[chemical_name]);
+    const chemical_id=chemical_id_data.rows[0]["chemical_id"];
+    const lab_id_data= await client.query(`select lab_id from lab where lab_name=$1;`,[lab_name]);
+    const lab_id = lab_id_data.rows[0]["lab_id"];
+    const check = await client.query(`select quantity from stock where chemical_id=$1 and lab_id=$2;`,[chemical_id,lab_id]);
+    const flag = check.rows;
     
-  // } catch (err) {
-  //   console.log(err);
-  //   res.status(500).json({
-  //     message: "Database error occurred while signing in!", //Database connection error
-  //   });
-  // };
+    if(flag.length ==0){
+    const data = await client.query(`insert into stock values($1,$2,$3);`,[chemical_id,Number(quantity),lab_id]);
+    console.log(typeof(quantity));
+    res.status(200).send({
+      message:"Stock Updated"
+    })
+    }
+    else{
+      const currentStock = Number(flag[0]["quantity"]);
+      var newStock = currentStock+quantity;
+      console.log(typeof(currentStock));
+      console.log(typeof(quantity));
+
+      const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
+      res.status(200).send({
+        message:"Stock Updated"
+      })
+
+    }
+
+    
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
+   });
+  }
+ 
 });
+
+router.get('/removeQuantity', async function (req, res) {
+  var { chemical_name, quantity,lab_name } = req.query;
+  quantity=Number(quantity);
+  try {
+    const chemical_id_data= await client.query(`select chemical_id from chemical where chemical_name=$1;`,[chemical_name]);
+    const chemical_id=chemical_id_data.rows[0]["chemical_id"];
+    const lab_id_data= await client.query(`select lab_id from lab where lab_name=$1;`,[lab_name]);
+    const lab_id = lab_id_data.rows[0]["lab_id"];
+    const check = await client.query(`select quantity from stock where chemical_id=$1 and lab_id=$2;`,[chemical_id,lab_id]);
+    const flag = check.rows;
+    
+    if(flag.length ==0){
+    res.status(200).send({
+      message:"Chemical not available in the lab."
+    })
+    }
+    else{
+      const currentStock = Number(flag[0]["quantity"]);
+      var newStock = currentStock-quantity;
+      const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
+      res.status(200).send({
+        message:"Stock Updated"
+      })
+
+    }
+
+    
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
+   });
+  }
+ 
+});
+
+
 
 
 module.exports = router;
