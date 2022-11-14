@@ -29,9 +29,11 @@ router.get('/login', async function (req, res) {
       });
     }
     else {
+      console.log(user[0].user_type);
       if (password === user[0].password) {
         res.status(200).json({
-          message: 'success'
+          message: 'success',
+          user_type: user[0].user_type
         });
       }
       else {
@@ -178,11 +180,45 @@ router.get('/removeDepartment', async function (req, res) {
   };
 });
 
+router.get('/removeUser', async function (req, res) {
+  const { user_name } = req.query;
+  //console.log(username);
+  try {
+    
+    const result = await client.query(`DELETE FROM users where username=$1`, [user_name]);
+    res.status(200).send({
+      message:"User Successfully Removed."
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Database error ", //Database connection error
+    });
+  };
+});
+
+router.get('/removeLab', async function (req, res) {
+  const { lab_name } = req.query;
+  //console.log(username);
+  try {
+    
+    const result = await client.query(`DELETE FROM lab where lab_name=$1`, [lab_name]);
+    res.status(200).send({
+      message:"Lab Successfully Removed."
+    })
+  } catch (err) {
+    //console.log(err);
+    res.status(500).json({
+      message: "Database error ", //Database connection error
+    });
+  };
+});
+
 router.get('/addDepartment', async function (req, res) {
   const { dept_name } = req.query;
   //console.log(username);
   try {
-    const check = await client.query(`select dept_name from department where dept_name=$1`,[dept_name]);
+    const check = await client.query(`select dept_name from department where dept_name=$1;`,[dept_name]);
     const flag = check.rows;
     if(flag.length !=0){
       res.status(200).send({
@@ -196,6 +232,34 @@ router.get('/addDepartment', async function (req, res) {
     })}
   } catch (err) {
     //console.log(err);
+    res.status(500).json({
+      message: "Database error ", //Database connection error
+    });
+  };
+});
+
+
+router.get('/addLab', async function (req, res) {
+  const { lab_name,room_no,dept_name } = req.query;
+  //console.log(username);
+  try {
+    const check = await client.query(`select lab_name from lab where lab_name=$1;`,[lab_name]);
+    const flag = check.rows;
+    if(flag.length !=0){
+      res.status(200).send({
+        message:"Lab Already Exists."
+      })
+    }
+    else{
+    const dept_id_data = await client.query(`select dept_id from department where dept_name=$1;`,[dept_name]);
+    const dept_id=dept_id_data.rows[0]["dept_id"]
+    console.log(dept_id);
+    const result = await client.query(`insert into lab(lab_name,room_no,dept_id) values($1,$2,$3);`, [lab_name,room_no,dept_id]);
+    res.status(200).send({
+      message:"Lab Successfully Created."
+    })}
+  } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: "Database error ", //Database connection error
     });
