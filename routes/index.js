@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const { Client } = require('pg')
+const cors = require("cors");
+router.use(cors());
 
 var conString = "pg://aezutnhcjblues:c08fd9af4f437cf57c09f1a86444e5cbd69080088cfb9913016a74df68b57ddf@ec2-44-199-9-102.compute-1.amazonaws.com:5432/d28opbrh5a49a0?sslmode=true"
 const client = new Client({
