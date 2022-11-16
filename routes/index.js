@@ -82,7 +82,7 @@ router.get('/getPhysicalStates', async function (req, res) {
   try {
     const data = await client.query(`select physical_state from units;`);
     const chemicalData = data.rows;
-    
+  
     res.status(200).send(chemicalData);
   } catch (error) {
    console.log(error);
@@ -143,6 +143,25 @@ router.get('/getPhysicalStates', async function (req, res) {
    });
   }
  });
+
+ router.get('/getStock',async function (req,res){
+  const {chemical_name}=req.query;
+  try{
+    const chemical_id_query = await client.query(`SELECT chemical_id from chemical where chemical_name=$1;`,[chemical_name]);
+    const chemical_id = chemical_id_query.rows[0].chemical_id;
+    const stockDataQuery = await client.query(`select * from stock where chemical_id=$1`,[chemical_id]);
+    const stockData = stockDataQuery.rows;
+    console.log(stockDataQuery.rows);
+    res.status(200).send(stockData);
+  }catch (err) {
+    //console.log(err);
+    res.status(500).json({
+      message: "Database error ", //Database connection error
+    });
+  };
+
+
+ })
 
  router.get('/registerUser', async function (req, res) {
   const { first_name,last_name,email,mobile,username,password,user_type,lab_name } = req.query;
