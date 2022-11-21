@@ -292,7 +292,7 @@ router.get('/getUnits',async function(req,res){
   try {
     const data = await client.query(`select units from units where physical_state=(select physical_state from chemical where chemical_name = $1);`,[chemical_name]);
     const chemicalData = data.rows;
-    res.status(200).send(chemicalData);
+    res.status(200).send(chemicalData);y
   } catch (error) {
    console.log(error);
    res.status(500).json({
