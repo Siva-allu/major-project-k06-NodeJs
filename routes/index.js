@@ -1,20 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const { Client } = require('pg')
+var pg = require('pg')
 const cors = require("cors");
 router.use(cors());
 
-var conString = "pg://aezutnhcjblues:c08fd9af4f437cf57c09f1a86444e5cbd69080088cfb9913016a74df68b57ddf@ec2-44-199-9-102.compute-1.amazonaws.com:5432/d28opbrh5a49a0?sslmode=true"
-const client = new Client({
-  user: 'aezutnhcjblues',
-  host: 'ec2-44-199-9-102.compute-1.amazonaws.com',
-  database: 'd28opbrh5a49a0',
-  password: 'c08fd9af4f437cf57c09f1a86444e5cbd69080088cfb9913016a74df68b57ddf',
-  port: 5432,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-})
+var conString = "postgres://tndgeykf:iloSBvPS3CbPtryGydIvs5iWKAkZxuGG@tiny.db.elephantsql.com/tndgeykf"
+var client=new pg.Client(conString);
 client.connect(function (err) {
   if (err) throw err;
   console.log("Database Connected!");
@@ -290,9 +281,10 @@ router.get('/addLab', async function (req, res) {
 router.get('/getUnits',async function(req,res){
   const {chemical_name}=req.query;
   try {
-    const data = await client.query(`select units from units where physical_state=(select physical_state from chemical where chemical_name = $1);`,[chemical_name]);
+    const data = await client.query(`select unit from units where physical_state=(select physical_state from chemical where chemical_name = $1);`,[chemical_name]);
     const chemicalData = data.rows;
-    res.status(200).send(chemicalData);y
+  
+    res.status(200).send(chemicalData);
   } catch (error) {
    console.log(error);
    res.status(500).json({
