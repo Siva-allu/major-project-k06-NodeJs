@@ -99,6 +99,7 @@ router.get('/getPhysicalStates', async function (req, res) {
  });
  router.get('/labDetailsUtil', async function (req, res) {
   const {dept_id}=req.query;
+  console.log(dept_id)
   try {
     const data = await client.query(`select * from lab where dept_id=$1;`,[dept_id]);
     const chemicalData = data.rows;
