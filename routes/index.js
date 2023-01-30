@@ -4,7 +4,7 @@ var pg = require('pg')
 const cors = require("cors");
 router.use(cors());
 
-var conString = "postgres://tndgeykf:iloSBvPS3CbPtryGydIvs5iWKAkZxuGG@tiny.db.elephantsql.com/tndgeykf"
+var conString = "postgres://tndgeykf:iloSBvPS3CbPtryGydIvs5iWKAkZxuGG@tiny.db.elephantsql.com/tndgeykf?idleTimeoutmillis=1000"
 var client=new pg.Client(conString);
 client.connect(function (err) {
   if (err) throw err;
@@ -88,6 +88,19 @@ router.get('/getPhysicalStates', async function (req, res) {
  router.get('/labDetails', async function (req, res) {
   try {
     const data = await client.query(`select * from lab;`);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
+   });
+  }
+ });
+ router.get('/labDetailsUtil', async function (req, res) {
+  const {dept_id}=req.query;
+  try {
+    const data = await client.query(`select * from lab where dept_id=$1;`,[dept_id]);
     const chemicalData = data.rows;
     res.status(200).send(chemicalData);
   } catch (error) {
