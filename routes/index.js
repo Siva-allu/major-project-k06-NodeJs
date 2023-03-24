@@ -76,7 +76,6 @@ router.get('/getAllChemicalNames', async function (req, res) {
  
  });
 
- //hi why the fuck it is not working
  router.get('/getChemicalNames', async function (req, res) {
   try {
     const data = await client.query(`select chemical_name from chemical;`);
@@ -413,7 +412,7 @@ router.get('/removeQuantity', async function (req, res) {
 const mongoose = require("mongoose");
 
 const dburl = "mongodb+srv://221910311060:U62Bwuj0C0hiGyV4@cluster0.1jwtxul.mongodb.net/?retryWrites=true&w=majority";
-// mongoose.connect(dburl);
+mongoose.connect(dburl);
 const database = mongoose.connection
 
 database.on('error',(error)=>{
