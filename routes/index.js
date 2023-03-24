@@ -75,6 +75,8 @@ router.get('/getAllChemicalNames', async function (req, res) {
   }
  
  });
+
+ //hi why the fuck it is not working
  router.get('/getChemicalNames', async function (req, res) {
   try {
     const data = await client.query(`select chemical_name from chemical;`);
