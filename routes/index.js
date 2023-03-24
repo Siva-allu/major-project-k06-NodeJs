@@ -3,13 +3,18 @@ var router = express.Router();
 var pg = require('pg')
 const cors = require("cors");
 router.use(cors());
+//PostgreSQL
+
+
 
 var conString = "postgres://tndgeykf:iloSBvPS3CbPtryGydIvs5iWKAkZxuGG@tiny.db.elephantsql.com/tndgeykf?idleTimeoutmillis=1000"
 var client=new pg.Client(conString);
 client.connect(function (err) {
   if (err) throw err;
-  console.log("Database Connected!");
+  console.log("PostgreSQL Database Connected!");
 });
+
+
 
 router.get('/login', async function (req, res) {
   const { username, password } = req.query;
@@ -59,6 +64,19 @@ router.get('/getAllChemicals', async function (req, res) {
 });
 router.get('/getAllChemicalNames', async function (req, res) {
   try {
+    const data = await client.query(`select chemical_id,chemical_name from chemical;`);
+    const chemicalData = data.rows;
+    res.status(200).send(chemicalData);
+  } catch (error) {
+   console.log(error);
+   res.status(500).json({
+     message: "Database error ", //Database connection error
+   });
+  }
+ 
+ });
+ router.get('/getChemicalNames', async function (req, res) {
+  try {
     const data = await client.query(`select chemical_name from chemical;`);
     const chemicalData = data.rows;
     res.status(200).send(chemicalData);
@@ -70,7 +88,6 @@ router.get('/getAllChemicalNames', async function (req, res) {
   }
  
  });
-
 router.get('/getPhysicalStates', async function (req, res) {
   try {
     const data = await client.query(`select physical_state from units;`);
@@ -387,6 +404,99 @@ router.get('/removeQuantity', async function (req, res) {
   }
  
 });
+
+
+
+//MongoDB 
+const mongoose = require("mongoose");
+
+const dburl = "mongodb+srv://221910311060:U62Bwuj0C0hiGyV4@cluster0.1jwtxul.mongodb.net/?retryWrites=true&w=majority";
+mongoose.connect(dburl);
+const database = mongoose.connection
+
+database.on('error',(error)=>{
+     console.log(error);
+});        
+
+database.once('connected',()=>{
+  console.log("MongoDB Database Connected!");
+});
+
+const dataSchema = new mongoose.Schema({
+  cid :{
+    type:Number
+  },
+  chemicalformula:{
+    type: String
+  },
+  description:{
+    type:String
+  },
+  precaution:{
+    type:String
+  }
+})
+
+const model= mongoose.model('properties',dataSchema);
+
+router.get('/getOne', async (req, res) => {
+  const {id}=req.query
+  console.log(id)
+  try{
+      
+      const data = await model.findOne({cid : 1});
+      res.json(data)
+  }
+  catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
