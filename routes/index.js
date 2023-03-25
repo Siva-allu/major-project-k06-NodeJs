@@ -409,50 +409,29 @@ router.get('/removeQuantity', async function (req, res) {
 
 
 //MongoDB 
-const mongoose = require("mongoose");
+const {MongoClient } = require("mongodb");
+const uri= "mongodb+srv://221910311060:U62Bwuj0C0hiGyV4@cluster0.1jwtxul.mongodb.net/?retryWrites=true&w=majority";
+const mongoClient= new MongoClient(uri);
 
-const dburl = "mongodb+srv://221910311060:U62Bwuj0C0hiGyV4@cluster0.1jwtxul.mongodb.net/?retryWrites=true&w=majority";
-mongoose.connect(dburl);
-const database = mongoose.connection
-
-database.on('error',(error)=>{
-     console.log(error);
-});        
-
-database.once('connected',()=>{
-  console.log("MongoDB Database Connected!");
-});
-
-const dataSchema = new mongoose.Schema({
-  cid :{
-    type:Number
-  },
-  chemicalformula:{
-    type: String
-  },
-  description:{
-    type:String
-  },
-  precaution:{
-    type:String
-  }
+router.get('/chemicalProperties',async function (req,res){
+  var {chemicalId}=req.query
+  let item= await mongoClient.db("Chemicals").collection("properties").findOne({cid: parseInt(chemicalId)});
+  res.status(200).send(item);
 })
+// async function helper() {
+// let item= await mongoClient.db("Chemicals").collection("properties").findOne({cid: 1});
+// console.log(item);
+// let updateItem= await mongoClient.db("Chemicals").collection("properties").updateOne({cid: 1},{
+//   $set:{
+//     precaution:"Water3"
+//   }
 
-const model= mongoose.model('properties',dataSchema);
-
-router.get('/getOne', async (req, res) => {
-  const {id}=req.query
-  console.log(id)
-  try{
-      
-      const data = await model.findOne({cid : 1});
-      res.json(data)
-  }
-  catch(error){
-      res.status(500).json({message: error.message})
-  }
-})
-
+// });
+// console.log(updateItem);
+// let updated= await mongoClient.db("Chemicals").collection("properties").findOne({cid: 1});
+// console.log(updated);
+// }
+// helper();
 
 
 
