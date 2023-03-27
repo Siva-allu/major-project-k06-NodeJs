@@ -31,7 +31,8 @@ router.get('/login', async function (req, res) {
       if (password === user[0].password) {
         res.status(200).json({
           message: 'success',
-          user_type: user[0].user_type
+          user_type: user[0].user_type,
+          user_id:user[0].user_id
         });
       }
       else {
@@ -330,7 +331,7 @@ router.get('/getUnits',async function(req,res){
 
 
 router.get('/addQuantity', async function (req, res) {
-  var { chemical_name, quantity,lab_name } = req.query;
+  var { chemical_name, quantity,lab_name,user_id } = req.query;
   quantity=Number(quantity);
   try {
     const chemical_id_data= await client.query(`select chemical_id from chemical where chemical_name=$1;`,[chemical_name]);
@@ -354,6 +355,7 @@ router.get('/addQuantity', async function (req, res) {
       console.log(typeof(quantity));
 
       const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
+      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'add',$3,$4)`,[lab_id,chemical_id,quantity,user_id]);
       res.status(200).send({
         message:"Stock Updated"
       })
@@ -371,7 +373,7 @@ router.get('/addQuantity', async function (req, res) {
 });
 
 router.get('/removeQuantity', async function (req, res) {
-  var { chemical_name, quantity,lab_name } = req.query;
+  var { chemical_name, quantity,lab_name,user_id } = req.query;
   quantity=Number(quantity);
   try {
     const chemical_id_data= await client.query(`select chemical_id from chemical where chemical_name=$1;`,[chemical_name]);
@@ -390,6 +392,7 @@ router.get('/removeQuantity', async function (req, res) {
       const currentStock = Number(flag[0]["quantity"]);
       var newStock = currentStock-quantity;
       const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
+      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'remove',$3,$4)`,[lab_id,chemical_id,quantity,user_id]);
       res.status(200).send({
         message:"Stock Updated"
       })
@@ -405,6 +408,7 @@ router.get('/removeQuantity', async function (req, res) {
   }
  
 });
+
 
 
 
