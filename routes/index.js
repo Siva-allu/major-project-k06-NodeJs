@@ -343,6 +343,7 @@ router.get('/addQuantity', async function (req, res) {
     
     if(flag.length ==0){
     const data = await client.query(`insert into stock values($1,$2,$3);`,[chemical_id,Number(quantity),lab_id]);
+    await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'add',$3,$4)`,[lab_id,chemical_id,quantity,Number(user_id)]);
     console.log(typeof(quantity));
     res.status(200).send({
       message:"Stock Updated"
@@ -355,7 +356,7 @@ router.get('/addQuantity', async function (req, res) {
       console.log(typeof(quantity));
 
       const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
-      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'add',$3,$4)`,[lab_id,chemical_id,quantity,user_id]);
+      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'add',$3,$4)`,[lab_id,chemical_id,quantity,Number(user_id)]);
       res.status(200).send({
         message:"Stock Updated"
       })
@@ -392,7 +393,7 @@ router.get('/removeQuantity', async function (req, res) {
       const currentStock = Number(flag[0]["quantity"]);
       var newStock = currentStock-quantity;
       const data = await client.query(`update stock set quantity = $1 where chemical_id=$2 and lab_id =$3;`,[Number(newStock),chemical_id,lab_id]);
-      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'remove',$3,$4)`,[lab_id,chemical_id,quantity,user_id]);
+      await client.query(`insert into logs(lab_id,chemical_id,action_type,quantity,user_id) values($1,$2,'remove',$3,$4)`,[lab_id,chemical_id,quantity,Number(user_id)]);
       res.status(200).send({
         message:"Stock Updated"
       })
