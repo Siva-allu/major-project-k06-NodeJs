@@ -412,11 +412,12 @@ router.get('/removeQuantity', async function (req, res) {
 
 router.get('/stock', (req, res) => {
   const sql = `
-    SELECT chemical.chemical_name, stock.quantity, lab.lab_name, department.dept_name
-    FROM stock
-    JOIN chemical ON stock.chemical_id = chemical.chemical_id
-    JOIN lab ON stock.lab_id = lab.lab_id
-    JOIN department ON lab.dept_id = department.dept_id;
+  SELECT c.chemical_name, s.quantity, l.lab_name, d.dept_name, u.unit
+  FROM stock s
+  JOIN chemical c ON s.chemical_id = c.chemical_id
+  JOIN lab l ON s.lab_id = l.lab_id
+  JOIN department d ON l.dept_id = d.dept_id
+  JOIN units u ON c.physical_state = u.physical_state;
   `;
 
   client.query(sql, (error, results) => {
