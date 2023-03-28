@@ -431,6 +431,28 @@ router.get('/stock', (req, res) => {
   });
 });
 
+router.get('/logs', (req, res) => {
+  const sql = `
+  SELECT logs.log_id, lab.lab_name, chemical.chemical_name, logs.action_type, logs.quantity, units.unit, users.username, 
+CAST(logs.timestamp AS DATE) as log_date, to_char(CAST(logs.timestamp AS TIME), 'HH:MI:SS AM') as log_time
+FROM logs
+JOIN lab ON logs.lab_id = lab.lab_id
+JOIN chemical ON logs.chemical_id = chemical.chemical_id
+JOIN users ON logs.user_id = users.user_id
+JOIN units ON chemical.physical_state = units.physical_state;
+  `;
+
+  client.query(sql, (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while retrieving stock.');
+    } else {
+      
+      res.status(200).json(results.rows);
+    }
+  });
+});
+
 
 
 //MongoDB 
