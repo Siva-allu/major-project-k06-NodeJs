@@ -410,6 +410,25 @@ router.get('/removeQuantity', async function (req, res) {
  
 });
 
+router.get('/stock', (req, res) => {
+  const sql = `
+    SELECT chemical.chemical_name, stock.quantity, lab.lab_name, department.dept_name
+    FROM stock
+    JOIN chemical ON stock.chemical_id = chemical.chemical_id
+    JOIN lab ON stock.lab_id = lab.lab_id
+    JOIN department ON lab.dept_id = department.dept_id;
+  `;
+
+  client.query(sql, (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while retrieving stock.');
+    } else {
+      
+      res.status(200).json(results.rows);
+    }
+  });
+});
 
 
 
