@@ -220,7 +220,7 @@ router.get('/removeDepartment', async function (req, res) {
       message:"Department Successfully Removed."
     })
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     res.status(500).json({
       message: "Database error ", //Database connection error
     });
@@ -254,7 +254,7 @@ router.get('/removeLab', async function (req, res) {
       message:"Lab Successfully Removed."
     })
   } catch (err) {
-    //console.log(err);
+    console.log(err);
     res.status(500).json({
       message: "Database error ", //Database connection error
     });
