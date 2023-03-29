@@ -453,6 +453,27 @@ JOIN units ON chemical.physical_state = units.physical_state;
   });
 });
 
+router.get('/labChemicals', (req, res) => {
+  const {lab_id}=req.query;
+  const sql = `
+  select chemical.chemical_id,chemical.chemical_name,stock.quantity,units.unit,stock.lab_id 
+from stock 
+JOIN chemical on stock.chemical_id=chemical.chemical_id
+JOIN units on chemical.physical_state = units.physical_state 
+where stock.lab_id = $1;
+  `;
+
+  client.query(sql,[lab_id], (error, results) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while retrieving stock.');
+    } else {
+      
+      res.status(200).json(results.rows);
+    }
+  });
+});
+
 
 
 //MongoDB 
